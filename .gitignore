@@ -1,0 +1,13 @@
+# Ignore Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Ignore Unity-specific files
+Library/
+Temp/
+Obj/
+.UnityPackageManager/
+.gradle/
