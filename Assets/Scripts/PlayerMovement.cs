@@ -1,12 +1,13 @@
 using UnityEngine;
-using TMPro; // Add this namespace for TextMeshPro
+using TMPro;
+using Unity.Netcode; // Add this namespace for TextMeshPro
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     public Joystick joystick;
     public float speed = 10f;
     public float acceleration = 15f;
-    private Animator animator;
+    public Animator animator;
     private Rigidbody rb;
     private Vector3 movementDirection;
 
@@ -15,7 +16,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        animator = GetComponent<Animator>();
+        Debug.Log($"Player spawned! IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}");
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+            Debug.Log(animator != null ? "Animator assigned!" : "Animator is still null!");
+        }
         rb = GetComponent<Rigidbody>();
 
         // Enable Rigidbody interpolation for smoother movement
@@ -28,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsOwner) return; // Only the owner can move the player
         Vector2 moveInput = joystick.GetInputVector();
         movementDirection = new Vector3(moveInput.x, 0, moveInput.y);
 
