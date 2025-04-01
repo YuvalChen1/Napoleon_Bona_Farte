@@ -119,16 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &90126347 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2977450899103843794, guid: 2758291548570f243a398d5f6c59f1aa, type: 3}
-  m_PrefabInstance: {fileID: 5245638230927449908}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &90126349 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2977450899104274866, guid: 2758291548570f243a398d5f6c59f1aa, type: 3}
-  m_PrefabInstance: {fileID: 5245638230927449908}
-  m_PrefabAsset: {fileID: 0}
 --- !u!95 &90126353 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 2977450899113375342, guid: 2758291548570f243a398d5f6c59f1aa, type: 3}
@@ -449,7 +439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd2ae1704206c0a469bb620308379532, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 90126349}
+  player: {fileID: 0}
   offset: {x: 0, y: 1.5, z: -1}
   smoothSpeed: 0.125
 --- !u!1 &410087039
@@ -1244,7 +1234,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1380960136}
-    PlayerPrefab: {fileID: 90126347}
+    PlayerPrefab: {fileID: 2046937111}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: fd0d87a4809dd0d4482976844fa63f0c, type: 2}
@@ -1266,6 +1256,7 @@ MonoBehaviour:
     NetworkTopology: 0
     UseCMBService: 0
     AutoSpawnPlayerPrefabClientSide: 1
+    NetworkMessageMetrics: 1
     NetworkProfilingMetrics: 1
     OldPrefabList: []
   RunInBackground: 1
@@ -4394,6 +4385,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1869065240}
   m_CullTransparentMesh: 1
+--- !u!1 &2046937111 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2977450899103843794, guid: 2758291548570f243a398d5f6c59f1aa, type: 3}
+  m_PrefabInstance: {fileID: 5245638230927449908}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5245638230927449908
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4406,6 +4402,22 @@ PrefabInstance:
       propertyPath: m_Animator
       value: 
       objectReference: {fileID: 90126353}
+    - target: {fileID: -812530635748698310, guid: 2758291548570f243a398d5f6c59f1aa, type: 3}
+      propertyPath: speed
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -812530635748698310, guid: 2758291548570f243a398d5f6c59f1aa, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 90126353}
+    - target: {fileID: -812530635748698310, guid: 2758291548570f243a398d5f6c59f1aa, type: 3}
+      propertyPath: joystick
+      value: 
+      objectReference: {fileID: 696661705}
+    - target: {fileID: -812530635748698310, guid: 2758291548570f243a398d5f6c59f1aa, type: 3}
+      propertyPath: gameOverText
+      value: 
+      objectReference: {fileID: 595141882}
     - target: {fileID: 1856594381750629111, guid: 2758291548570f243a398d5f6c59f1aa, type: 3}
       propertyPath: UseRigidBodyForMotion
       value: 0
