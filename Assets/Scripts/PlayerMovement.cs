@@ -1,40 +1,51 @@
 using UnityEngine;
 using TMPro;
-using Unity.Netcode; // Add this namespace for TextMeshPro
+using Unity.Netcode;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    public Joystick joystick;
+    private Joystick joystick; // Dynamically assigned joystick
     public float speed = 10f;
     public float acceleration = 15f;
     public Animator animator;
     private Rigidbody rb;
     private Vector3 movementDirection;
-
-    // Change this to TextMeshProUGUI for TextMeshPro
-    public TextMeshProUGUI gameOverText; // For TextMeshProUGUI
+    private TextMeshProUGUI gameOverText; // Dynamically assigned Game Over text
 
     void Start()
     {
         Debug.Log($"Player spawned! IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}");
-        if (animator == null)
+
+        if (!IsOwner) return; // Only the local player should set UI references
+
+        // Find the joystick in the scene
+        joystick = FindObjectOfType<Joystick>();
+
+        // Find the Game Over text in the scene
+        gameOverText = GameObject.Find("GameOverText")?.GetComponent<TextMeshProUGUI>();
+
+        if (gameOverText != null)
         {
-            animator = GetComponent<Animator>();
-            Debug.Log(animator != null ? "Animator assigned!" : "Animator is still null!");
+            gameOverText.gameObject.SetActive(false); // Hide Game Over at start
         }
+
         rb = GetComponent<Rigidbody>();
 
         // Enable Rigidbody interpolation for smoother movement
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.freezeRotation = true; // Prevents unwanted physics-based rotation
 
-        // Hide the Game Over text at the start
-        gameOverText.gameObject.SetActive(false);
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+            Debug.Log(animator != null ? "Animator assigned!" : "Animator is still null!");
+        }
     }
 
     private void FixedUpdate()
     {
-        if (!IsOwner) return; // Only the owner can move the player
+        if (!IsOwner || joystick == null) return; // Only the owner can move the player
+
         Vector2 moveInput = joystick.GetInputVector();
         movementDirection = new Vector3(moveInput.x, 0, moveInput.y);
 
@@ -43,7 +54,7 @@ public class PlayerMovement : NetworkBehaviour
         Vector3 force = (desiredVelocity - rb.linearVelocity) * acceleration;
         rb.AddForce(force, ForceMode.Acceleration);
 
-        // Only rotate if the player is moving AND is grounded
+        // Rotate player when moving
         if (movementDirection.sqrMagnitude > 0.01f && IsGrounded())
         {
             Quaternion targetRotation = Quaternion.LookRotation(movementDirection);
@@ -51,8 +62,7 @@ public class PlayerMovement : NetworkBehaviour
         }
         else
         {
-            // Stop unwanted spinning
-            rb.angularVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero; // Prevents unwanted spinning
         }
 
         // Handle animation
@@ -70,11 +80,13 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (other.CompareTag("DeathZone")) // Assuming you have a DeathZone trigger
         {
-            // Show Game Over text
-            gameOverText.gameObject.SetActive(true);
+            if (gameOverText != null)
+            {
+                gameOverText.gameObject.SetActive(true); // Show Game Over text
+            }
 
-            // Optionally, stop player movement (freeze Rigidbody)
-            rb.linearVelocity = Vector3.zero; // Stops the player completely
+            // Stop player movement (freeze Rigidbody)
+            rb.linearVelocity = Vector3.zero;
         }
     }
 }

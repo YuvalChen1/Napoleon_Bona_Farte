@@ -205,10 +205,10 @@ MonoBehaviour:
   UseUnreliableDeltas: 0
   SyncPositionX: 1
   SyncPositionY: 1
-  SyncPositionZ: 0
-  SyncRotAngleX: 0
-  SyncRotAngleY: 0
-  SyncRotAngleZ: 0
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
@@ -253,7 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   TransitionStateInfoList: []
-  m_Animator: {fileID: 0}
+  m_Animator: {fileID: 2977450899113375342}
 --- !u!114 &-812530635748698310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,8 +267,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  joystick: {fileID: 0}
-  speed: 10
+  speed: 1.5
   acceleration: 15
-  animator: {fileID: 0}
-  gameOverText: {fileID: 0}
+  animator: {fileID: 2977450899113375342}
+--- !u!95 &2977450899113375342 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: fcb334eb247ae3e488abb081c847cf09, type: 3}
+  m_PrefabInstance: {fileID: 2977450899103875854}
+  m_PrefabAsset: {fileID: 0}

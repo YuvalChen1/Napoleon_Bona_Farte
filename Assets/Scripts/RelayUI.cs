@@ -11,6 +11,7 @@ public class RelayUI : MonoBehaviour
     public Button joinRelayButton;
     public TMP_InputField joinCodeInput;
     public TMP_Text joinCodeDisplay; // Displays the join code
+    public GameObject relayPanel; // Assign the UI panel that should be hidden
 
     private void Start()
     {
@@ -28,6 +29,9 @@ public class RelayUI : MonoBehaviour
         {
             joinCodeDisplay.text = "Join Code: " + joinCode;
             GUIUtility.systemCopyBuffer = joinCode; // Copies join code to clipboard
+
+            // Hide the Relay UI for the Host
+            relayPanel.SetActive(false);
         }
     }
 
@@ -38,6 +42,9 @@ public class RelayUI : MonoBehaviour
         {
             Task joinRelayTask = relayManager.JoinRelay(joinCode);
             yield return new WaitUntil(() => joinRelayTask.IsCompleted);
+
+            // Hide the Relay UI for the Client who joined
+            relayPanel.SetActive(false);
         }
     }
 }
