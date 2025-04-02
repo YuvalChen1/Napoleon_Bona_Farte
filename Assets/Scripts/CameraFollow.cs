@@ -1,30 +1,42 @@
 using UnityEngine;
+using Unity.Netcode;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform player;        // Reference to the player's transform
-    public Vector3 offset;          // Offset distance between the player and camera
-    public float smoothSpeed = 0.125f; // Smoothing factor
+    private Transform player;
+    public Vector3 offset = new Vector3(0, 5, -5);
+    public float smoothSpeed = 0.125f;
+
+    private void Start()
+    {
+        FindLocalPlayer();
+    }
 
     private void LateUpdate()
     {
-        // Check if the player is assigned
-        if (player != null)
+        if (player == null)
         {
-            // Get the desired position of the camera
-            Vector3 desiredPosition = player.position + offset;
-
-            // Smoothly move the camera to the new position
-            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
-            transform.position = smoothedPosition;
-
-            // Keep the camera's rotation fixed to the initial value (no tilt)
-            transform.rotation = Quaternion.Euler(45, 0, 0);
+            FindLocalPlayer(); // Try to find the player again if lost
+            return;
         }
-        else
+
+        Vector3 desiredPosition = player.position + offset;
+        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+        transform.position = smoothedPosition;
+
+        transform.rotation = Quaternion.Euler(45, 0, 0);
+    }
+
+    private void FindLocalPlayer()
+    {
+        foreach (var obj in FindObjectsByType<NetworkObject>(FindObjectsSortMode.None))
         {
-            // Optionally, log a warning if the player is missing
-            Debug.LogWarning("Player reference is missing in CameraFollow script.");
+            if (obj.IsOwner) // Only assign the camera to the local player
+            {
+                player = obj.transform;
+                Debug.Log($"Camera now follows: {player.name}");
+                return;
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ using Unity.Services.Relay.Models;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
+using System;
 
 public class RelayManager : MonoBehaviour
 {
@@ -77,7 +78,24 @@ public class RelayManager : MonoBehaviour
         }
         catch (RelayServiceException e)
         {
-            Debug.LogError($"Relay join error: {e.Message}");
+            if (e.Message.Contains("Not Found"))
+            {
+                Debug.LogError($"Join Relay failed: Room with join code '{joinCode}' not found.");
+                // Handle the case when the room is not found, provide more user-friendly feedback
+                throw new Exception("Room not found");
+            }
+            else
+            {
+                Debug.LogError($"Relay join error: {e.Message}");
+                // Handle any other RelayServiceException errors
+                throw;
+            }
+        }
+        finally
+        {
+            // Ensure the UI can return to its normal state
+            // For example: isJoining = false; or HideLoadingUI()
         }
     }
+
 }
