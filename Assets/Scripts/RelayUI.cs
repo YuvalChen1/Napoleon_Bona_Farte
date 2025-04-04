@@ -11,10 +11,9 @@ public class RelayUI : MonoBehaviour
     public Button createRelayButton;
     public Button joinRelayButton;
     public TMP_InputField joinCodeInput;
-    public TMP_Text joinCodeDisplay;
     public TMP_Text errorMessageText; // Text for error messages
     public GameObject relayPanel;
-    private bool isJoining;
+    //private bool isJoining;
 
     private void Start()
     {
@@ -32,8 +31,9 @@ public class RelayUI : MonoBehaviour
         string joinCode = createRelayTask.Result;
         if (!string.IsNullOrEmpty(joinCode))
         {
-            joinCodeDisplay.text = "Join Code: " + joinCode;
-            GUIUtility.systemCopyBuffer = joinCode;
+            //RelayCodeStore.JoinCode = joinCode;
+            //Debug.Log("Stored join code in RelayCodeStore: " + RelayCodeStore.JoinCode);
+            //GUIUtility.systemCopyBuffer = joinCode;
             relayPanel.SetActive(false);
         }
     }
@@ -46,7 +46,7 @@ public class RelayUI : MonoBehaviour
         if (IsJoinCodeValid(joinCode))
         {
             // Disable the UI or show loading state if needed
-            isJoining = true;
+            //isJoining = true;
             errorMessageText.gameObject.SetActive(false); // Hide error message initially
 
             // Call JoinRelay and wait for it to complete
@@ -54,7 +54,7 @@ public class RelayUI : MonoBehaviour
             yield return new WaitUntil(() => joinRelayTask.IsCompleted);
 
             // Stop waiting and handle errors
-            isJoining = false;
+            //isJoining = false;
 
             if (joinRelayTask.IsFaulted)
             {

@@ -6,7 +6,7 @@ using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
-using Unity.Networking.Transport.Relay;
+using UnityEngine.SceneManagement;
 using System;
 
 public class RelayManager : MonoBehaviour
@@ -32,7 +32,6 @@ public class RelayManager : MonoBehaviour
 
             Debug.Log($"Relay created! Join Code: {joinCode}");
 
-            // Extract data manually and pass correct parameters
             var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
             transport.SetRelayServerData(
                 allocation.RelayServer.IpV4,
@@ -42,8 +41,10 @@ public class RelayManager : MonoBehaviour
                 allocation.ConnectionData
             );
 
-            // Start the host
-            NetworkManager.Singleton.StartHost();
+            // Register callback to start host after scene is loaded
+            SceneManager.sceneLoaded += OnGameSceneLoadedAsHost;
+
+            SceneManager.LoadScene("GameScene");
 
             return joinCode;
         }
@@ -62,7 +63,6 @@ public class RelayManager : MonoBehaviour
 
             Debug.Log($"Joined Relay with Code: {joinCode}");
 
-            // Extract data manually and pass correct parameters
             var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
             transport.SetRelayServerData(
                 joinAllocation.RelayServer.IpV4,
@@ -73,29 +73,43 @@ public class RelayManager : MonoBehaviour
                 joinAllocation.HostConnectionData
             );
 
-            // Start the client
-            NetworkManager.Singleton.StartClient();
+            // Register callback to start client after scene is loaded
+            SceneManager.sceneLoaded += OnGameSceneLoadedAsClient;
+
+            SceneManager.LoadScene("GameScene");
         }
         catch (RelayServiceException e)
         {
             if (e.Message.Contains("Not Found"))
             {
                 Debug.LogError($"Join Relay failed: Room with join code '{joinCode}' not found.");
-                // Handle the case when the room is not found, provide more user-friendly feedback
                 throw new Exception("Room not found");
             }
             else
             {
                 Debug.LogError($"Relay join error: {e.Message}");
-                // Handle any other RelayServiceException errors
                 throw;
             }
         }
-        finally
+    }
+
+    // Called once GameScene is fully loaded (for host)
+    private void OnGameSceneLoadedAsHost(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "GameScene")
         {
-            // Ensure the UI can return to its normal state
-            // For example: isJoining = false; or HideLoadingUI()
+            SceneManager.sceneLoaded -= OnGameSceneLoadedAsHost;
+            NetworkManager.Singleton.StartHost();
         }
     }
 
+    // Called once GameScene is fully loaded (for client)
+    private void OnGameSceneLoadedAsClient(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "GameScene")
+        {
+            SceneManager.sceneLoaded -= OnGameSceneLoadedAsClient;
+            NetworkManager.Singleton.StartClient();
+        }
+    }
 }
