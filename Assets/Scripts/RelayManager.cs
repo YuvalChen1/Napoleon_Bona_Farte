@@ -32,6 +32,9 @@ public class RelayManager : MonoBehaviour
 
             Debug.Log($"Relay created! Join Code: {joinCode}");
 
+            PlayerPrefs.SetString("JoinCode", joinCode);
+            PlayerPrefs.Save();
+
             var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
             transport.SetRelayServerData(
                 allocation.RelayServer.IpV4,
