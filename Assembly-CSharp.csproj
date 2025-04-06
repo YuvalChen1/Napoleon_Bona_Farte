@@ -65,12 +65,17 @@
     <Compile Include="Assets\Scripts\RelayManager.cs" />
     <Compile Include="Assets\Scripts\DeathZone.cs" />
     <Compile Include="Assets\Scripts\ClientNetworkAnimator.cs" />
+    <Compile Include="Assets\Scripts\MatchMakingManager.cs" />
+    <Compile Include="Assets\Scripts\LobbyUIManager.cs" />
+    <Compile Include="Assets\Scripts\MatchManager.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\ClientNetworkTransform.cs" />
+    <Compile Include="Assets\Scripts\AmbientSoundmanager.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\RelayUI.cs" />
     <Compile Include="Assets\Scripts\GameSceneManager.cs" />
     <Compile Include="Assets\Scripts\Joystick.cs" />
+    <Compile Include="Assets\Scripts\SpawnManager.cs" />
     <Compile Include="Assets\Scripts\CameraFollow.cs" />
     <Compile Include="Assets\Scripts\LoadingScreen.cs" />
   </ItemGroup>

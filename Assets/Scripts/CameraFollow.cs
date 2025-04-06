@@ -7,16 +7,11 @@ public class CameraFollow : MonoBehaviour
     public Vector3 offset = new Vector3(0, 5, -5);
     public float smoothSpeed = 0.125f;
 
-    private void Start()
-    {
-        FindLocalPlayer();
-    }
-
     private void LateUpdate()
     {
         if (player == null)
         {
-            FindLocalPlayer(); // Try to find the player again if lost
+            TryFindLocalPlayer();
             return;
         }
 
@@ -27,16 +22,23 @@ public class CameraFollow : MonoBehaviour
         transform.rotation = Quaternion.Euler(45, 0, 0);
     }
 
-    private void FindLocalPlayer()
+    private void TryFindLocalPlayer()
     {
-        foreach (var obj in FindObjectsByType<NetworkObject>(FindObjectsSortMode.None))
+        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsConnectedClient)
+            return;
+
+        var ownedObjects = NetworkManager.Singleton.SpawnManager?.GetClientOwnedObjects(NetworkManager.Singleton.LocalClientId);
+        if (ownedObjects == null) return;
+
+        foreach (var obj in ownedObjects)
         {
-            if (obj.IsOwner) // Only assign the camera to the local player
+            if (obj.TryGetComponent(out NetworkObject netObj))
             {
                 player = obj.transform;
-                Debug.Log($"Camera now follows: {player.name}");
-                return;
+                Debug.Log($"[CameraFollow] Following local player: {player.name}");
+                break;
             }
         }
     }
+
 }

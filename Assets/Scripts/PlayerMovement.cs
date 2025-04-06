@@ -1,6 +1,6 @@
-using UnityEngine;
 using TMPro;
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerMovement : NetworkBehaviour
@@ -19,6 +19,8 @@ public class PlayerMovement : NetworkBehaviour
     private bool isPushing = false;
     public float pushCooldown = 3f; // Cooldown in seconds
 
+    public bool canMove = false;
+
     private TextMeshProUGUI pushButtonText; // Timer text inside button
     private Color originalButtonColor;
     private Image buttonImage; // UI Image component of the button
@@ -29,12 +31,23 @@ public class PlayerMovement : NetworkBehaviour
 
         if (!IsOwner) return;
 
-     
-         gameObject.name = $"Player_{OwnerClientId}";
-         Debug.Log($"[Player] Assigned name: {gameObject.name}");
-        
+        // Disable camera if this is not the local player
+        Camera playerCamera = GetComponentInChildren<Camera>();
+        if (playerCamera != null)
+            playerCamera.enabled = false;
+        else
+            Debug.LogWarning("No camera found!");
 
-        joystick = FindAnyObjectByType<Joystick>();
+        AudioListener listener = GetComponentInChildren<AudioListener>();
+        if (listener != null)
+            listener.enabled = false;
+        else
+            Debug.LogWarning("No AudioListener found!");
+
+        gameObject.name = $"Player_{OwnerClientId}";
+        Debug.Log($"[Player] Assigned name: {gameObject.name}");
+
+        joystick = FindObjectOfType<Joystick>();
         gameOverText = GameObject.Find("GameOverText")?.GetComponent<TextMeshProUGUI>();
 
         if (gameOverText != null) gameOverText.gameObject.SetActive(false);
@@ -49,7 +62,7 @@ public class PlayerMovement : NetworkBehaviour
             Debug.Log(animator != null ? "Animator assigned!" : "Animator is still null!");
         }
 
-        // Find the push button and assign event
+        // Find or create the push button and assign event
         pushButton = GameObject.Find("FartButton")?.GetComponent<Button>();
         if (pushButton != null)
         {
@@ -68,7 +81,7 @@ public class PlayerMovement : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!IsOwner || joystick == null) return;
+        if (!IsOwner || joystick == null || !canMove) return;
 
         Vector2 moveInput = joystick.GetInputVector();
         movementDirection = new Vector3(moveInput.x, 0, moveInput.y);
@@ -101,6 +114,28 @@ public class PlayerMovement : NetworkBehaviour
         {
             if (gameOverText != null) gameOverText.gameObject.SetActive(true);
             rb.linearVelocity = Vector3.zero;
+        }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            if (SpawnManager.Instance == null)
+            {
+                Debug.LogError("SpawnManager.Instance is null!");
+                return;
+            }
+
+            Transform spawnPoint = SpawnManager.Instance.GetSpawnPoint();
+            if (spawnPoint == null)
+            {
+                Debug.LogError("No spawn point available!");
+                return;
+            }
+
+            transform.position = spawnPoint.position;
+            transform.rotation = spawnPoint.rotation; // Set rotation as well
         }
     }
 
@@ -154,9 +189,6 @@ public class PlayerMovement : NetworkBehaviour
             }
         }
     }
-
-
-
 
     private System.Collections.IEnumerator PushCooldown()
     {

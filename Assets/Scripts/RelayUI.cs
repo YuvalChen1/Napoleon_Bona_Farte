@@ -13,6 +13,7 @@ public class RelayUI : MonoBehaviour
     public TMP_InputField joinCodeInput;
     public TMP_Text errorMessageText; // Text for error messages
     public GameObject relayPanel;
+
     //private bool isJoining;
 
     private void Start()
@@ -31,12 +32,10 @@ public class RelayUI : MonoBehaviour
         string joinCode = createRelayTask.Result;
         if (!string.IsNullOrEmpty(joinCode))
         {
-            //RelayCodeStore.JoinCode = joinCode;
-            //Debug.Log("Stored join code in RelayCodeStore: " + RelayCodeStore.JoinCode);
-            //GUIUtility.systemCopyBuffer = joinCode;
             relayPanel.SetActive(false);
         }
     }
+
 
     private IEnumerator JoinRelaySession()
     {
